@@ -1,0 +1,254 @@
+#!/usr/bin/env php
+<?php declare(strict_types=1);
+
+use IKM\CLI\CommandLineFormatter;
+use IKM\CLI\CommandLineWriter;
+
+// Set folder
+chdir(__DIR__);
+
+// Error logging
+ini_set('log_errors', '1');
+ini_set('error_log', './php_errors.log');
+
+// Autoload
+require __DIR__ . '/vendor/autoload.php';
+
+// Get CLI tools
+$writer    = new CommandLineWriter();
+$format = new CommandLineFormatter();
+
+
+//$writer->hr();
+
+$message = 'Astronomy-to-XYZ';
+$writer->writeLine($message);
+
+$writer->br();
+
+
+
+// -------------
+$output = 'Star Name, Ex: ' . $format->fg_bright_cyan . 'Alpha Centauri A' . $format->reset;
+fwrite(STDOUT, $output);
+
+$is_ready = true;
+$input = '';
+$star_name = '';
+if($is_ready){
+    fwrite(STDOUT, "\n");
+    $output = $format->reset . 'Star Name: ';
+    do{
+        $input = readline($output);
+    } while(empty($input));
+}
+$star_name = $input;
+// -------------
+
+$writer->br();
+
+
+
+// -------------
+$output = 'Right Ascension Hours, Ex: ' . $format->fg_bright_cyan . '14' . $format->reset . ' when ' . $format->fg_bright_cyan . '14' . $format->reset . 'h 39m 36.49400s';
+fwrite(STDOUT, $output);
+
+$is_ready = true;
+$input = '';
+$right_ascension_hours = '';
+if($is_ready){
+    fwrite(STDOUT, "\n");
+    $output = $format->reset . 'Right Ascension Hours: ';
+    do{
+        $input = readline($output);
+    } while(empty($input) && $input !== '0');
+}
+$right_ascension_hours = $input;
+// -------------
+
+// -------------
+$output = 'Right Ascension Minutes, Ex: ' . $format->fg_bright_cyan . '39' . $format->reset . ' when 14h ' . $format->fg_bright_cyan . '39' . $format->reset . 'm 36.49400s';
+fwrite(STDOUT, $output);
+
+$is_ready = true;
+$input = '';
+$right_ascension_minutes = '';
+if($is_ready){
+    fwrite(STDOUT, "\n");
+    $output = $format->reset . 'Right Ascension Minutes: ';
+    do{
+        $input = readline($output);
+    } while(empty($input) && $input !== '0');
+}
+$right_ascension_minutes = $input;
+// -------------
+
+// -------------
+$output = 'Right Ascension Seconds, Ex: ' . $format->fg_bright_cyan . '36.494' . $format->reset . ' when 14h 39m ' . $format->fg_bright_cyan . '36.49400' . $format->reset . 's';
+fwrite(STDOUT, $output);
+
+$is_ready = true;
+$input = '';
+$right_ascension_seconds = '';
+if($is_ready){
+    fwrite(STDOUT, "\n");
+    $output = $format->reset . 'Right Ascension Seconds: ';
+    do{
+        $input = readline($output);
+    } while(empty($input) && $input !== '0');
+}
+$right_ascension_seconds = $input;
+// -------------
+
+$writer->br();
+
+// -------------
+$output = 'Declination Degrees, Ex: ' . $format->fg_bright_cyan . '-60' . $format->reset . ' when ' . $format->fg_bright_cyan . '−60'. $format->reset .'° 50′ 02.3737″';
+fwrite(STDOUT, $output);
+
+$is_ready = true;
+$input = '';
+$declination_degrees = '';
+if($is_ready){
+    fwrite(STDOUT, "\n");
+    $output = $format->reset . 'Declination Degrees: ';
+    do{
+        $input = readline($output);
+    } while(empty($input) && $input !== '0');
+}
+$declination_degrees = $input;
+// -------------
+
+// -------------
+$output = 'Declination Arcminutes, Ex: ' . $format->fg_bright_cyan . '50' . $format->reset . ' when −60° ' . $format->fg_bright_cyan . '50' . $format->reset . '′ 02.3737″';
+fwrite(STDOUT, $output);
+
+$is_ready = true;
+$input = '';
+$declination_arcminutes = '';
+if($is_ready){
+    fwrite(STDOUT, "\n");
+    $output = $format->reset . 'Declination Arcminutes: ';
+    do{
+        $input = readline($output);
+    } while(empty($input) && $input !== '0');
+}
+$declination_arcminutes = $input;
+// -------------
+
+// -------------
+$output = 'Declination Arcseconds, Ex: ' . $format->fg_bright_cyan . '2.3737' . $format->reset . ' when −60° 50′ '. $format->fg_bright_cyan .'02.3737' . $format->reset . '″';
+fwrite(STDOUT, $output);
+
+$is_ready = true;
+$input = '';
+$declination_arcseconds = '';
+if($is_ready){
+    fwrite(STDOUT, "\n");
+    $output = $format->reset . 'Declination Arcseconds: ';
+    do{
+        $input = readline($output);
+    } while(empty($input) && $input !== '0');
+}
+$declination_arcseconds = $input;
+// -------------
+
+$writer->br();
+
+// -------------
+$output = 'Distance in Lightyears, Ex: ' . $format->fg_bright_cyan . '4.344' . $format->reset . ' when ' . $format->fg_bright_cyan . '4.344' . $format->reset . ' ± 0.002 ly';
+fwrite(STDOUT, $output);
+
+$is_ready = true;
+$input = '';
+$lightyears = '';
+if($is_ready){
+    fwrite(STDOUT, "\n");
+    $output = $format->reset . 'Lightyears: ';
+    do{
+        $input = readline($output);
+    } while(empty($input));
+}
+$lightyears = $input;
+// -------------
+
+$writer->br();
+
+// --- RA conversion ---
+//var ra_hours = ra_h + (ra_m / 60.0) + (ra_s / 3600.0)
+//var ra = deg_to_rad(ra_hours * 15.0)
+
+// Get inputs for Right Ascension
+$given_right_ascension_hours_float = floatval($right_ascension_hours);
+$given_right_ascension_minutes_float = floatval($right_ascension_minutes);
+$given_right_ascension_seconds_float = floatval($right_ascension_seconds);
+
+// Get Right Ascension as radians
+$total_right_ascension_hours_float = $given_right_ascension_hours_float + ($given_right_ascension_minutes_float / 60.0) + ($given_right_ascension_seconds_float / 3600.0);
+$right_ascension_degrees_float = $total_right_ascension_hours_float * 15.0;
+$right_ascension_radians_float = deg2rad($right_ascension_degrees_float);
+
+// --- Dec conversion ---
+//var sign = 1.0
+//if dec_deg < 0:
+//    sign = -1.0
+//
+//var dec_total = abs(dec_deg) + (dec_m / 60.0) + (dec_s / 3600.0)
+//var dec = deg_to_rad(dec_total * sign)
+
+// Get inputs for Declination
+$given_declination_degrees_float = floatval($declination_degrees);
+$given_declination_arcminutes_float = floatval($declination_arcminutes);
+$given_declination_arcseconds_float = floatval($declination_arcseconds);
+
+// Get the sign from the first non-zero value of the Declination
+$declination_sign = 1.0;
+$is_sign_on_declination_degrees = false;
+$is_sign_on_declination_arcminutes = false;
+$is_sign_on_declination_arcseconds = false;
+if (!empty($given_declination_degrees_float)) {
+    $is_sign_on_declination_degrees = true;
+    $is_declination_degrees_positive_or_zero = $given_declination_degrees_float >= 0.0;
+    $declination_sign = ($is_declination_degrees_positive_or_zero) ? 1.0 : -1.0;
+} elseif (!empty($given_declination_arcminutes_float)) {
+    $is_sign_on_declination_arcminutes = true;
+    $is_declination_arcminutes_positive_or_zero = $given_declination_arcminutes_float >= 0.0;
+    $declination_sign = ($is_declination_arcminutes_positive_or_zero) ? 1.0 : -1.0;
+} elseif (!empty($given_declination_arcseconds_float)) {
+    $is_sign_on_declination_arcseconds = true;
+    $is_declination_arcseconds_positive_or_zero = $given_declination_arcseconds_float >= 0.0;
+    $declination_sign = ($is_declination_arcseconds_positive_or_zero) ? 1.0 : -1.0;
+}
+
+// Get Declination as radians
+$unsigned_total_declination_degrees_float = abs($given_declination_degrees_float) + (abs($given_declination_arcminutes_float) / 60.0) + (abs($given_declination_arcseconds_float) / 3600.0);
+$signed_total_declination_degrees_float = $unsigned_total_declination_degrees_float * $declination_sign;
+$declination_radians_float = deg2rad($signed_total_declination_degrees_float);
+
+// Get inputs for Distance
+$distance_lightyears_float = abs(floatval($lightyears));
+
+// --- Cartesian (Godot-friendly Y-up) ---
+//var x = distance * cos(dec) * cos(ra)
+//var y = distance * sin(dec)
+//var z = distance * cos(dec) * sin(ra)
+//
+//return Vector3(x, y, z)
+
+$x = ($distance_lightyears_float * cos($declination_radians_float) * cos($right_ascension_radians_float)) * -1.0;
+$y = $distance_lightyears_float * sin($declination_radians_float);
+$z = ($distance_lightyears_float * cos($declination_radians_float) * sin($right_ascension_radians_float)) * -1.0;
+
+
+$writer->writeLine('Star: ' . $format->fg_bright_green . $star_name . $format->reset);
+$writer->writeLine('Right Ascension: ' . $format->fg_bright_green . $right_ascension_hours . 'h ' . $right_ascension_minutes . 'm ' . $right_ascension_seconds . 's (' . $right_ascension_radians_float . 'rad)' . $format->reset);
+$writer->writeLine('Declination: ' . $format->fg_bright_green . $declination_degrees . '° ' . $declination_arcminutes . '′ ' . $declination_arcseconds . '″ (' . $declination_radians_float .'rad)' . $format->reset);
+$writer->writeLine('Distance: ' . $format->fg_bright_green . $lightyears . ' ly ' . $format->reset);
+
+$writer->br();
+
+$writer->writeLine('XYZ: ' . $format->fg_bright_green . '(' . $x . ', ' . $y . ', ' . $z . ')' . $format->reset);
+
+$writer->br();
+
+// $writer->hr();
