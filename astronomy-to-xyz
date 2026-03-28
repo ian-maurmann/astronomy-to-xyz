@@ -235,10 +235,46 @@ $distance_lightyears_float = abs(floatval($lightyears));
 //
 //return Vector3(x, y, z)
 
-$x = ($distance_lightyears_float * cos($declination_radians_float) * cos($right_ascension_radians_float)) * -1.0;
+$z = ($distance_lightyears_float * cos($declination_radians_float) * cos($right_ascension_radians_float)) * -1.0;
 $y = $distance_lightyears_float * sin($declination_radians_float);
-$z = ($distance_lightyears_float * cos($declination_radians_float) * sin($right_ascension_radians_float)) * -1.0;
+$x = ($distance_lightyears_float * cos($declination_radians_float) * sin($right_ascension_radians_float)) * -1.0;
 
+$cardinality_grid_up = null;
+$cardinality_grid_down = null;
+$cardinality_grid_left = null;
+$cardinality_grid_right = null;
+$cardinality_grid_forward = null;
+$cardinality_grid_backward = null;
+
+// Amount Up/Down
+if($y > 0) {
+    // Axis from the Earth's North Pole on the March Equinox
+    $cardinality_grid_up = $y;
+}
+if($y < 0) {
+    // Axis from the Earth's South Pole on the March Equinox
+    $cardinality_grid_down = abs($y);
+}
+
+// Amount Left/Right
+if($x > 0) {
+    // Axis from the Earth's right-hand side (or starboard side) when facing the Sun on the March Equinox
+    $cardinality_grid_right = $x;
+}
+if($x < 0) {
+    // Axis from the Earth's left-hand side (or larboard/port side) when facing the Sun on the March Equinox
+    $cardinality_grid_left = abs($x);
+}
+
+// Amount Forward/Backward
+if($z > 0){
+    // Axis from the center of the Earth pointed away the Sun on the March Equinox
+    $cardinality_grid_backward = $z;
+}
+if($z < 0){
+    // Axis pointed from the center of the Earth towards the center of the Sun on the March Equinox
+    $cardinality_grid_forward = abs($z);
+}
 
 $writer->writeLine('Star: ' . $format->fg_bright_green . $star_name . $format->reset);
 $writer->writeLine('Right Ascension: ' . $format->fg_bright_green . $right_ascension_hours . 'h ' . $right_ascension_minutes . 'm ' . $right_ascension_seconds . 's (' . $right_ascension_radians_float . 'rad)' . $format->reset);
@@ -247,7 +283,84 @@ $writer->writeLine('Distance: ' . $format->fg_bright_green . $lightyears . ' ly 
 
 $writer->br();
 
+//$x_nf = number_format($x, 4, '.', ',');
+//$y_nf = number_format($y, 4, '.', ',');
+//$z_nf = number_format($z, 4, '.', ',');
+
 $writer->writeLine('XYZ: ' . $format->fg_bright_green . '(' . $x . ', ' . $y . ', ' . $z . ')' . $format->reset);
+
+$writer->br();
+
+if(!empty($cardinality_grid_up)) {
+    $writer->writeLine($format->fg_bright_green . 'Up ' . $cardinality_grid_up . $format->reset);
+}
+if(!empty($cardinality_grid_down)) {
+    $writer->writeLine($format->fg_bright_green . 'Down ' . $cardinality_grid_down . $format->reset);
+}
+if(!empty($cardinality_grid_forward)) {
+    $writer->writeLine($format->fg_bright_green . 'Forward ' . $cardinality_grid_forward . $format->reset);
+}
+if(!empty($cardinality_grid_backward)) {
+    $writer->writeLine($format->fg_bright_green . 'Backward ' . $cardinality_grid_backward . $format->reset);
+}
+if(!empty($cardinality_grid_left)) {
+    $writer->writeLine($format->fg_bright_green . 'Left ' . $cardinality_grid_left . $format->reset);
+}
+if(!empty($cardinality_grid_right)) {
+    $writer->writeLine($format->fg_bright_green . 'Right ' . $cardinality_grid_right . $format->reset);
+}
+
+$writer->br();
+
+$location_is_on_origin                   =  empty($cardinality_grid_up) &&  empty($cardinality_grid_down) &&  empty($cardinality_grid_forward) &&  empty($cardinality_grid_backward) &&  empty($cardinality_grid_left) &&  empty($cardinality_grid_right);
+$location_is_on_up_y_axis                = !empty($cardinality_grid_up) &&  empty($cardinality_grid_down) &&  empty($cardinality_grid_forward) &&  empty($cardinality_grid_backward) &&  empty($cardinality_grid_left) &&  empty($cardinality_grid_right);
+$location_is_on_down_y_axis              =  empty($cardinality_grid_up) && !empty($cardinality_grid_down) &&  empty($cardinality_grid_forward) &&  empty($cardinality_grid_backward) &&  empty($cardinality_grid_left) &&  empty($cardinality_grid_right);
+$location_is_on_forward_z_axis           =  empty($cardinality_grid_up) &&  empty($cardinality_grid_down) && !empty($cardinality_grid_forward) &&  empty($cardinality_grid_backward) &&  empty($cardinality_grid_left) &&  empty($cardinality_grid_right);
+$location_is_on_backward_z_axis          =  empty($cardinality_grid_up) &&  empty($cardinality_grid_down) &&  empty($cardinality_grid_forward) && !empty($cardinality_grid_backward) &&  empty($cardinality_grid_left) &&  empty($cardinality_grid_right);
+$location_is_on_left_x_axis              =  empty($cardinality_grid_up) &&  empty($cardinality_grid_down) &&  empty($cardinality_grid_forward) &&  empty($cardinality_grid_backward) && !empty($cardinality_grid_left) &&  empty($cardinality_grid_right);
+$location_is_on_right_x_axis             =  empty($cardinality_grid_up) &&  empty($cardinality_grid_down) &&  empty($cardinality_grid_forward) &&  empty($cardinality_grid_backward) &&  empty($cardinality_grid_left) && !empty($cardinality_grid_right);
+$location_is_on_upper_face_yz_plane      = !empty($cardinality_grid_up) &&  empty($cardinality_grid_down) && !empty($cardinality_grid_forward) &&  empty($cardinality_grid_backward) &&  empty($cardinality_grid_left) &&  empty($cardinality_grid_right);
+$location_is_on_upper_back_yz_plane      = !empty($cardinality_grid_up) &&  empty($cardinality_grid_down) &&  empty($cardinality_grid_forward) && !empty($cardinality_grid_backward) &&  empty($cardinality_grid_left) &&  empty($cardinality_grid_right);
+$location_is_on_upper_left_xy_plane      = !empty($cardinality_grid_up) &&  empty($cardinality_grid_down) &&  empty($cardinality_grid_forward) &&  empty($cardinality_grid_backward) && !empty($cardinality_grid_left) &&  empty($cardinality_grid_right);
+$location_is_on_upper_right_xy_plane     = !empty($cardinality_grid_up) &&  empty($cardinality_grid_down) &&  empty($cardinality_grid_forward) &&  empty($cardinality_grid_backward) &&  empty($cardinality_grid_left) && !empty($cardinality_grid_right);
+$location_is_on_down_face_yz_plane       =  empty($cardinality_grid_up) && !empty($cardinality_grid_down) && !empty($cardinality_grid_forward) &&  empty($cardinality_grid_backward) &&  empty($cardinality_grid_left) &&  empty($cardinality_grid_right);
+$location_is_on_down_back_yz_plane       =  empty($cardinality_grid_up) && !empty($cardinality_grid_down) &&  empty($cardinality_grid_forward) && !empty($cardinality_grid_backward) &&  empty($cardinality_grid_left) &&  empty($cardinality_grid_right);
+$location_is_on_down_left_xy_plane       =  empty($cardinality_grid_up) && !empty($cardinality_grid_down) &&  empty($cardinality_grid_forward) &&  empty($cardinality_grid_backward) && !empty($cardinality_grid_left) &&  empty($cardinality_grid_right);
+$location_is_on_down_right_xy_plane      =  empty($cardinality_grid_up) && !empty($cardinality_grid_down) &&  empty($cardinality_grid_forward) &&  empty($cardinality_grid_backward) &&  empty($cardinality_grid_left) && !empty($cardinality_grid_right);
+$location_is_on_left_up_face_octant_1    = !empty($cardinality_grid_up) &&  empty($cardinality_grid_down) && !empty($cardinality_grid_forward) &&  empty($cardinality_grid_backward) && !empty($cardinality_grid_left) &&  empty($cardinality_grid_right);
+$location_is_on_right_up_face_octant_2   = !empty($cardinality_grid_up) &&  empty($cardinality_grid_down) && !empty($cardinality_grid_forward) &&  empty($cardinality_grid_backward) &&  empty($cardinality_grid_left) && !empty($cardinality_grid_right);
+$location_is_on_left_up_back_octant_3    = !empty($cardinality_grid_up) &&  empty($cardinality_grid_down) &&  empty($cardinality_grid_forward) && !empty($cardinality_grid_backward) && !empty($cardinality_grid_left) &&  empty($cardinality_grid_right);
+$location_is_on_right_up_back_octant_4   = !empty($cardinality_grid_up) &&  empty($cardinality_grid_down) &&  empty($cardinality_grid_forward) && !empty($cardinality_grid_backward) &&  empty($cardinality_grid_left) && !empty($cardinality_grid_right);
+$location_is_on_left_down_face_octant_5  =  empty($cardinality_grid_up) && !empty($cardinality_grid_down) && !empty($cardinality_grid_forward) &&  empty($cardinality_grid_backward) && !empty($cardinality_grid_left) &&  empty($cardinality_grid_right);
+$location_is_on_right_down_face_octant_6 =  empty($cardinality_grid_up) && !empty($cardinality_grid_down) && !empty($cardinality_grid_forward) &&  empty($cardinality_grid_backward) &&  empty($cardinality_grid_left) && !empty($cardinality_grid_right);
+$location_is_on_left_down_back_octant_7  =  empty($cardinality_grid_up) && !empty($cardinality_grid_down) &&  empty($cardinality_grid_forward) && !empty($cardinality_grid_backward) && !empty($cardinality_grid_left) &&  empty($cardinality_grid_right);
+$location_is_on_right_down_back_octant_8 =  empty($cardinality_grid_up) && !empty($cardinality_grid_down) &&  empty($cardinality_grid_forward) && !empty($cardinality_grid_backward) &&  empty($cardinality_grid_left) && !empty($cardinality_grid_right);
+
+if ($location_is_on_origin)                   {$writer->writeLine($format->fg_bright_green . 'Located on the origin'               . $format->reset);}
+if ($location_is_on_up_y_axis)                {$writer->writeLine($format->fg_bright_green . 'Located on the Up Y-Axis'            . $format->reset);}
+if ($location_is_on_down_y_axis)              {$writer->writeLine($format->fg_bright_green . 'Located on the Down Y-Axis'          . $format->reset);}
+if ($location_is_on_forward_z_axis)           {$writer->writeLine($format->fg_bright_green . 'Located on the Front Z-Axis'         . $format->reset);}
+if ($location_is_on_backward_z_axis)          {$writer->writeLine($format->fg_bright_green . 'Located on the Back Z-Axis'          . $format->reset);}
+if ($location_is_on_left_x_axis)              {$writer->writeLine($format->fg_bright_green . 'Located on the Left X-Axis'          . $format->reset);}
+if ($location_is_on_right_x_axis)             {$writer->writeLine($format->fg_bright_green . 'Located on the Right X-Axis'         . $format->reset);}
+if ($location_is_on_upper_face_yz_plane)      {$writer->writeLine($format->fg_bright_green . 'Located on the Upper Front YZ-Plane' . $format->reset);}
+if ($location_is_on_upper_back_yz_plane)      {$writer->writeLine($format->fg_bright_green . 'Located on the Upper Back YZ-Plane'  . $format->reset);}
+if ($location_is_on_upper_left_xy_plane)      {$writer->writeLine($format->fg_bright_green . 'Located on the Upper Left XY-Plane'  . $format->reset);}
+if ($location_is_on_upper_right_xy_plane)     {$writer->writeLine($format->fg_bright_green . 'Located on the Upper Right XY-Plane' . $format->reset);}
+if ($location_is_on_down_face_yz_plane)       {$writer->writeLine($format->fg_bright_green . 'Located on the Lower Front YZ-Plane' . $format->reset);}
+if ($location_is_on_down_back_yz_plane)       {$writer->writeLine($format->fg_bright_green . 'Located on the Lower Back YZ-Plane'  . $format->reset);}
+if ($location_is_on_down_left_xy_plane)       {$writer->writeLine($format->fg_bright_green . 'Located on the Lower Left XY-Plane'  . $format->reset);}
+if ($location_is_on_down_right_xy_plane)      {$writer->writeLine($format->fg_bright_green . 'Located on the Lower Right XY-Plane' . $format->reset);}
+if ($location_is_on_left_up_face_octant_1)    {$writer->writeLine($format->fg_bright_green . 'Located in the Left Up-Face / Octant 1' . $format->reset);}
+if ($location_is_on_right_up_face_octant_2)   {$writer->writeLine($format->fg_bright_green . 'Located in the Right Up-Face / Octant 2' . $format->reset);}
+if ($location_is_on_left_up_back_octant_3)    {$writer->writeLine($format->fg_bright_green . 'Located in the Left Up-Back / Octant 3' . $format->reset);}
+if ($location_is_on_right_up_back_octant_4)   {$writer->writeLine($format->fg_bright_green . 'Located in the Right Up-Back / Octant 4' . $format->reset);}
+if ($location_is_on_left_down_face_octant_5)  {$writer->writeLine($format->fg_bright_green . 'Located in the Left Down-Face / Octant 5' . $format->reset);}
+if ($location_is_on_right_down_face_octant_6) {$writer->writeLine($format->fg_bright_green . 'Located in the Right Down-Face / Octant 6' . $format->reset);}
+if ($location_is_on_left_down_back_octant_7)  {$writer->writeLine($format->fg_bright_green . 'Located in the Left Down-Back / Octant 7' . $format->reset);}
+if ($location_is_on_right_down_back_octant_8) {$writer->writeLine($format->fg_bright_green . 'Located in the Right Down-Back / Octant 8' . $format->reset);}
+
+
 
 $writer->br();
 
